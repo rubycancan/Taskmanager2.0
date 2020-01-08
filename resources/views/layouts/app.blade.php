@@ -6,7 +6,8 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    <meta name="api-token" content="{{ Auth::check() ? 'Bearer '.JWTAuth::fromUser(Auth::user()) : '' }}">
+{{--    <meta name="api-token" content="{{ Auth::check() ? JWTAuth::fromUser(Auth::user()) : '' }}">--}}
     <title>{{ config('app.name', 'Laravel') }}</title>
 
 
@@ -32,12 +33,17 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
+                    @auth
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('tasks.index') }}">所有任务</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('tasks.charts') }}">图表统计</a>
+                        </li>
+                       <search class="ml-3"></search>
                     </ul>
-
+                    @endauth
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
@@ -78,6 +84,13 @@
             @yield('content')
         </main>
     </div>
+    <footer class="footer mt-auto py-3">
+        <div class="container">
+            @auth
+            <span class="text-muted">当前共有{{ $total }}个任务，已完成了{{ $todoCount }}个，未完成{{ $doneCount }}个</span>
+            @endauth
+        </div>
+    </footer>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
     @yield('customJS')

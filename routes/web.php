@@ -28,5 +28,10 @@ Route::get('/projects','ProjectsController@index');
 Route::get('/', 'ProjectsController@index');
 Route::get('projects/{project}','ProjectsController@show')->name('projects.show');
 
+Route::get('tasks/charts','TasksController@charts')->name('tasks.charts');
 Route::resource('tasks','TasksController');
+Route::resource('tasks.steps','StepController');
 Route::post('tasks/{id}/check','TasksController@check')->name('tasks.check');
+
+
+Route::resource('steps','StepController');

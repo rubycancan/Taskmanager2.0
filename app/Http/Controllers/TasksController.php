@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateTask;
 use App\Http\Requests\UpdateTask;
+use App\Project;
 use App\Repositories\TasksRepository;
 use App\Task;
 use Illuminate\Http\Request;
@@ -57,9 +58,12 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Task $task)
     {
-        //
+        $steps = $task->steps()->get();
+        $todos = $steps->where('completion',0)->values();
+        $dones = $steps->where('completion',1)->values();
+        return view('tasks.show', compact('task','todos','dones'));
     }
 
     public function check($id) {
@@ -101,5 +105,16 @@ class TasksController extends Controller
     {
         $this->repo->delete($id);
         return back();
+    }
+
+    public function charts()
+    {
+        $total = $this->repo->totalCount();
+        $todoCount = $this->repo->todoCount();
+        $doneCount = $this->repo->doneCount();
+        $names = $this->repo->filterNames();
+        $projects = Project::with('tasks')->get();
+//
+        return view('tasks.charts', compact('total','todoCount','doneCount','names', 'projects'));
     }
 }
